@@ -10,6 +10,7 @@ Vec2.prototype.set = function(src) {
 Vec2.prototype.reset = function() {
 	this.x = 0;
 	this.y = 0;
+	return this;
 }
 Vec2.prototype.add = function(other) {
 	this.x += other.x;
