@@ -83,8 +83,8 @@ function ParticleSystem(ctx) {
 				var np = n.p.pos;
 				tmp.sub(np);
 				var dist = tmp.length();
-				var d = (dist-n.expDist) * dConst;
-				p.force.sub(tmp.normalize().scale(d));
+				var d = (n.expDist-dist) * dConst;
+				p.force.add(tmp.normalize().scale(d));
 				
 			}
 			p.vel.add(p.force.scale(1/p.mass)).scale(easing);
