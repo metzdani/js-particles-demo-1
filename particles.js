@@ -30,14 +30,29 @@ function ParticleSystem(ctx) {
 	
 	var py = 20;
 	
-	var idx=0;
-	for (var y=0; y<yNum; y++) {
-		var px = 20;
-		for (var x=0; x<xNum; x++) {
-			particles.push(new Particle(new Vec2(px, py), particleMass, idx++));
-			px += jx;
+	initParticles();
+	initNeighbourhood();
+	initEventHandlers();
+
+	function initParticles(){
+		var idx=0;
+		for (var y=0; y<yNum; y++) {
+			var px = 20;
+			for (var x=0; x<xNum; x++) {
+				particles.push(new Particle(new Vec2(px, py), particleMass, idx++));
+				px += jx;
+			}
+			py += jy;
 		}
-		py += jy;
+	}
+	
+	function initNeighbourhood() {
+		for (var y=0; y<yNum; y++) {
+			for (var x=0; x<xNum; x++) {
+				var p  = getParticle(x, y);
+				p.neighbours = getNeighbourhood(p, x, y);
+			}
+		}
 	}
 	
 	function getParticle(x,y) {
@@ -48,25 +63,22 @@ function ParticleSystem(ctx) {
 		}
 	}
 	
-	var dtmp = new Vec2(0,0);
-	for (var y=0; y<yNum; y++) {
-		for (var x=0; x<xNum; x++) {
-			var p  = getParticle(x, y);
-			for (var xx=-2; xx<3; xx++) {
-				for (var yy=-2; yy<3; yy++) {
-					if (xx!=0 || yy!=0) {
-						var npart = getParticle(x+xx, y+yy);
-						if (npart!=null){
-							dtmp.set(npart.pos).sub(p.pos);
-							p.neighbours.push({
-								p: getParticle(x+xx, y+yy),
-								expDist: dtmp.length()
-							});
-						}
-					}
-				}
+	function getNeighbourhood(p,x,y) {
+		var dtmp = new Vec2(0,0);
+		var ret = [];
+		for (var xx=-2; xx<3; xx++) {
+			for (var yy=-2; yy<3; yy++) {
+				if (xx==0 && yy==0) continue; 
+				var npart = getParticle(x+xx, y+yy);
+				if (npart==null) continue;
+				dtmp.set(npart.pos).sub(p.pos);
+				ret.push({
+					p: getParticle(x+xx, y+yy),
+					expDist: dtmp.length()
+				});
 			}
 		}
+		return ret;
 	}
 	
 	
@@ -137,26 +149,28 @@ function ParticleSystem(ctx) {
 		ctx.fill();
 	}
 		
-	document.addEventListener('mousedown', function(e) {
-		var mPos = new Vec2(e.offsetX, e.offsetY);
-		dragStart(mPos);
-	});
-	
-	document.addEventListener('touchstart', function(e) {
-		var mPos = new Vec2(e.touches[0].clientX, e.touches[0].clientY);
-		dragStart(mPos);
-	});
-	
-	document.addEventListener('mouseup', dragStop);
-	document.addEventListener('touchend', dragStop);
-	
-	document.addEventListener('mousemove', function(e){
-		drag(e.offsetX, e.offsetY);
-	});
-	
-	document.addEventListener('touchmove', function(e){
-		drag(e.touches[0].clientX, e.touches[0].clientY);
-	});
+	function initEventHandlers() {
+		document.addEventListener('mousedown', function(e) {
+			var mPos = new Vec2(e.offsetX, e.offsetY);
+			dragStart(mPos);
+		});
+		
+		document.addEventListener('touchstart', function(e) {
+			var mPos = new Vec2(e.touches[0].clientX, e.touches[0].clientY);
+			dragStart(mPos);
+		});
+		
+		document.addEventListener('mouseup', dragStop);
+		document.addEventListener('touchend', dragStop);
+		
+		document.addEventListener('mousemove', function(e){
+			drag(e.offsetX, e.offsetY);
+		});
+		
+		document.addEventListener('touchmove', function(e){
+			drag(e.touches[0].clientX, e.touches[0].clientY);
+		});
+	}
 	
 	function dragStart(mPos) {
 		selectedIdx = -1;
@@ -169,6 +183,7 @@ function ParticleSystem(ctx) {
 			}
 		}
 	}
+	
 	function dragStop(mPos) {
 		selectedIdx = -1;
 	}
