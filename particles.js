@@ -184,7 +184,7 @@ function ParticleSystem(ctx) {
 		}
 	}
 	
-	function dragStop(mPos) {
+	function dragStop() {
 		selectedIdx = -1;
 	}
 	
