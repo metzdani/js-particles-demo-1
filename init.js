@@ -29,7 +29,7 @@ window.onload = function() {
 		ctx.globalAlpha = 1.0;
 		ctx.font="16px Fixed";
 		ctx.fillStyle = "#000";
-		ctx.fillText(fps.toFixed(2) + " fps",5,15);
+		ctx.fillText(Math.round(fps) + " fps",5,15);
 	}
 	
 	
