@@ -15,7 +15,7 @@ function ParticleSystem(ctx) {
 	
 	var particles = [];
 	var dConst = 0.005;
-	var easing = 0.9;
+	var easing = 0.1;
 	var particleMass = 0.05;
 	
 	var xNum = 12;
@@ -99,17 +99,18 @@ function ParticleSystem(ctx) {
 				p.force.add(tmp.normalize().scale(d));
 				
 			}
-			p.vel.add(p.force.scale(1/p.mass)).scale(easing);
+			p.vel.add(p.force.scale(dt/p.mass)).scale(1.0-easing*dt);
 		}
 		
 		if (selectedIdx>-1) {
 			particles[selectedIdx].vel.x = 0;
 			particles[selectedIdx].vel.y = 0;
 		}
-			
+		
 		for (var i=0; i<particles.length; i++) {
 			var p = particles[i];
-			p.pos.add(p.vel);
+			tmp.set(p.vel);
+			p.pos.add(tmp.scale(dt));
 		}
 	};
 	
@@ -193,5 +194,7 @@ function ParticleSystem(ctx) {
 		particles[selectedIdx].pos.x = x;
 		particles[selectedIdx].pos.y = y;
 	}
+
+	var tmp = new Vec2(0,0);
 	
 }

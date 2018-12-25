@@ -14,7 +14,7 @@ window.onload = function() {
 		var dt = now - lastFrame;
 		ctx.clearRect(0,0,canvas.width,canvas.height);
 		
-		system.update();
+		system.update(1.0);
 		system.render();
 		
 		drawDebug(lastFrame, performance.now());
